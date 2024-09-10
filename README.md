@@ -10,6 +10,9 @@ The videos have a random animation between them between:
 - Slide right
 - Slide top
 - Slide bottom
+- Rotate left
+- Rotate right
+- Zoom
 
 The transition uses like an "alpha" channel, so images are mounted over the last one.
 
@@ -26,6 +29,9 @@ The different configuration variables are on the top side of the script. Here's 
 - duration_of_transition = 0.25
 - video_title = "Video Title"
 - video_subtitle = "Video Subtitle"
+- watermark_filename = "watermark.png"
+
+These are the defaults values. You can also select others with params. 'python imgs2tiktokvideo.py -h' for more info about that.
  
 ## Watermark
 You can use a watermark in the root dir named as "watermark.png". Check the code to optimize its size and position.
@@ -34,4 +40,3 @@ You can use a watermark in the root dir named as "watermark.png". Check the code
 Among my plans are:
 - Create new transitions.
 - Animated watermark.
-- More flexible input/output (folder names, video name, etc)
