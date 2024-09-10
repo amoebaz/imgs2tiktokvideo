@@ -17,7 +17,7 @@ import random
 import numpy as np
 import sys
 import shutil
-import subprocess
+import argparse
 
 os.environ["FFMPEG_BINARY"] = "ffmpeg"
 
@@ -37,6 +37,7 @@ duration_per_image = 2
 duration_of_transition = 0.25
 video_title = "Video Title"
 video_subtitle = "Video Subtitle"
+watermark_filename = "watermark.png"
 
 # Transition animations
 # - crossfade
@@ -225,9 +226,9 @@ def create_slideshow(image_folder, output_video, duration_per_image=2, video_siz
     except Exception as e:
         print(f"Error creating TextClip: {e}")
 
-    # Watermark (located at ./watermark.png)
+    # Watermark (default located at ./watermark.png)
     lado_marca_agua = video_height / 10
-    logo = (ImageClip("watermark.png")
+    logo = (ImageClip(watermark_filename)
             .set_duration(final_clip.duration)
             .resize(height=(lado_marca_agua), width=(lado_marca_agua))
             .margin(right=20, top=20, opacity=0)
@@ -261,9 +262,22 @@ def copy_images(origen, destino='images'):
             shutil.copy2(os.path.join(origen, archivo), destino)
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1:
-        source_folder = sys.argv[1]
-        copy_images(source_folder)
-        print(f"{source_folder} images copied to './images'")
+    parser = argparse.ArgumentParser(description='Create a vertical video based on a set of images.')
+    parser.add_argument('source_folder', help='Images origin folder')
+    parser.add_argument('-t', '--title', default="", help='Video title (printed)')
+    parser.add_argument('-s', '--subtitle', default="", help='Video subtitle (printed)')
+    parser.add_argument('-o', '--output', default='output_video.mp4', help='Output video filename (default: output_video.mp4)')
+    parser.add_argument('-d', '--duration', type=float, default=2, help='Image duration in seconds (default: 2)')
+    parser.add_argument('-f', '--fps', type=int, default=60, help='Frames per second (default: 60)')
+    parser.add_argument('-w', '--watermark', default="watermark.png", help='Watermark filename (default: watermark.png)')
+
+    args = parser.parse_args()
+
+    copy_images(args.source_folder)
+    print(f"{args.source_folder} images copied to './images'")
     
-    create_slideshow('images', 'output_video.mp4')
+    video_title = args.title
+    video_subtitle = args.subtitle
+    watermark_filename = args.watermark
+
+    create_slideshow('images', args.output)
